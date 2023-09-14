@@ -1,5 +1,5 @@
 {
-  "name": "com.google.googleads-mobile-unity",
+  "name": "com.g00gle.googleads-mobile-unity",
   "version": "8.5.2",
   "displayName": "Google Mobile Ads Unity Plugin",
   "description": "The Google Mobile Ads SDK is the latest generation in Google mobile advertising featuring refined ad formats and streamlined APIs for access to mobile ad networks and advertising solutions. The SDK enables mobile app developers to maximize their monetization in native mobile apps. This plugin enables Unity developers to easily serve Google Mobile Ads on Android and iOS apps without having to write Java or Objective-C code. The plugin provides a C# interface for requesting ads that is used by C# scripts in your Unity project.",
