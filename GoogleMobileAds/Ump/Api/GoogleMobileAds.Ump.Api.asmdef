@@ -1,0 +1,10 @@
+{
+    "name": "GoogleMobileAds.Ump.Api",
+    "references": [
+        "GoogleMobileAds.Api",
+        "GoogleMobileAds.Ump",
+        "GoogleMobileAds.Ump.Common"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": []
+}

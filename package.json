@@ -1,31 +1,29 @@
 {
-  "name": "com.g00gle.googleads-mobile-unity",
-  "version": "8.5.6",
-  "displayName": "Google Mobile Ads Unity Plugin",
-  "description": "The Google Mobile Ads SDK is the latest generation in Google mobile advertising featuring refined ad formats and streamlined APIs for access to mobile ad networks and advertising solutions. The SDK enables mobile app developers to maximize their monetization in native mobile apps. This plugin enables Unity developers to easily serve Google Mobile Ads on Android and iOS apps without having to write Java or Objective-C code. The plugin provides a C# interface for requesting ads that is used by C# scripts in your Unity project.",
-  "unity": "2019.4",
-  "documentationUrl": "https://developers.google.com/admob/unity",
-  "changelogUrl": "https://github.com/srichakradhar/googleads-mobile-unity/releases",
-  "licensesUrl": "https://github.com/srichakradhar/googleads-mobile-unity/blob/main/LICENSE",
-  "dependencies": {},
-  "keywords": [
-    "Google",
-    "Mobile",
-    "Ads"
-  ],
-  "author": {
-    "name": "srichakradhar"
-  },
-  "samples": [
-    {
-      "displayName": "Hello World",
-      "description": "The how-to sample to monetize a Unity app. Demonstrates how to load and show the AdMob ad formats.",
-      "path": "Samples~/HelloWorld"
+    "name": "com.google.ads.mobile",
+    "version": "8.6.0",
+    "displayName": "Google Mobile Ads Unity Plugin",
+    "description": "The Google Mobile Ads SDK is the latest generation in Google mobile advertising featuring refined ad formats and streamlined APIs for access to mobile ad networks and advertising solutions. The SDK enables mobile app developers to maximize their monetization in native mobile apps. This plugin enables Unity developers to easily serve Google Mobile Ads on Android and iOS apps without having to write Java or Objective-C code. The plugin provides a C# interface for requesting ads that is used by C# scripts in your Unity project.",
+    "unity": "2019.4",
+    "documentationUrl": "https://developers.google.com/admob/unity",
+    "changelogUrl": "https://github.com/googleads/googleads-mobile-unity/releases",
+    "licensesUrl": "https://github.com/googleads/googleads-mobile-unity/blob/main/LICENSE",
+    "dependencies": {
+      "com.google.external-dependency-manager": "1.2.178"
     },
-    {
-        "displayName": "Native Sample",
-        "description": "The classic Roll-A-Ball sample using the native ads add-on. Demonstrates how to request and display a native ad in the game.",
-        "path": "Samples~/Roll-A-Ball-NativeDemo"
-    }
-  ]
+    "keywords": [
+      "Google",
+      "Mobile",
+      "Ads"
+    ],
+    "author": {
+      "name": "Google LLC"
+    },
+    "samples": [
+        {
+            "displayName": "Hello World",
+            "description": "The how-to sample to monetize a Unity app. Demonstrates how to load and show the AdMob ad formats.",
+            "path": "Samples~/HelloWorld"
+        }
+    ]
 }
+
