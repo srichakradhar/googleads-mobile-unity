@@ -224,7 +224,6 @@ namespace GoogleMobileAds.Api
             String typeName = null;
             if (Application.platform == RuntimePlatform.IPhonePlayer) {
               typeName = "GoogleMobileAds.GoogleMobileAdsClientFactory,GoogleMobileAds.iOS";
-            typeName = "GoogleMobileAds.GoogleMobileAdsClientFactory";
             } else if (Application.platform == RuntimePlatform.Android) {
               typeName = "GoogleMobileAds.GoogleMobileAdsClientFactory,GoogleMobileAds.Android";
             } else {
