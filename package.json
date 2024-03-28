@@ -1,29 +1,21 @@
 {
-    "name": "com.google.ads.mobile",
-    "version": "8.6.3",
-    "displayName": "Google Mobile Ads Unity Plugin",
-    "description": "The Google Mobile Ads SDK is the latest generation in Google mobile advertising featuring refined ad formats and streamlined APIs for access to mobile ad networks and advertising solutions. The SDK enables mobile app developers to maximize their monetization in native mobile apps. This plugin enables Unity developers to easily serve Google Mobile Ads on Android and iOS apps without having to write Java or Objective-C code. The plugin provides a C# interface for requesting ads that is used by C# scripts in your Unity project.",
-    "unity": "2019.4",
-    "documentationUrl": "https://developers.google.com/admob/unity",
-    "changelogUrl": "https://github.com/googleads/googleads-mobile-unity/releases",
-    "licensesUrl": "https://github.com/googleads/googleads-mobile-unity/blob/main/LICENSE",
-    "dependencies": {
-      "com.google.external-dependency-manager": "1.2.178"
-    },
-    "keywords": [
-      "Google",
-      "Mobile",
-      "Ads"
-    ],
-    "author": {
-      "name": "Google LLC"
-    },
-    "samples": [
-        {
-            "displayName": "Hello World",
-            "description": "The how-to sample to monetize a Unity app. Demonstrates how to load and show the AdMob ad formats.",
-            "path": "Samples~/HelloWorld"
-        }
-    ]
+  "name": "com.google.ads.mobile",
+  "version": "9.0.0",
+  "displayName": "Google Mobile Ads for Unity",
+  "keywords": [
+    "Google",
+    "Mobile",
+    "Ads",
+    "vh-name:GoogleMobileAds",
+    "vh-name:Google Mobile Ads for Unity"
+  ],
+  "author": {
+    "name": "Google LLC",
+    "url": "https://github.com/googleads/googleads-mobile-unity"
+  },
+  "description": "The Google Mobile Ads package allows you to easily monetize your Unity apps for iOS and Android using Google's native iOS and Android Mobile SDKs via a unified C# API in Unity.",
+  "unity": "2019.4",
+  "dependencies": {
+    "com.google.external-dependency-manager": "1.2.179"
+  }
 }
-

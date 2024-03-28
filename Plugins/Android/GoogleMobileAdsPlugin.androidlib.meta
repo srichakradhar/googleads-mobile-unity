@@ -1,27 +1,8 @@
 fileFormatVersion: 2
-guid: 4fd4bdb8ba18848558351a2d9e458ea9
-PluginImporter:
-  externalObjects: {}
-  serializedVersion: 2
-  iconMap: {}
-  executionOrder: {}
-  defineConstraints: []
-  isPreloaded: 0
-  isOverridable: 1
-  isExplicitlyReferenced: 0
-  validateReferences: 1
-  platformData:
-  - first:
-      Any: 
-    second:
-      enabled: 1
-      settings: {}
-  - first:
-      Editor: Editor
-    second:
-      enabled: 0
-      settings:
-        DefaultValueInitialized: true
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+guid: c33bdaba04e24de6b04e40d982a6b993
+timeCreated: 1480838400
+folderAsset: true
+DefaultImporter:
+  userData:
+  assetBundleName:
+  assetBundleVariant:
