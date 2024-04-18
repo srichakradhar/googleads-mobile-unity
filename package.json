@@ -8,7 +8,7 @@
     "changelogUrl": "https://github.com/googleads/googleads-mobile-unity/releases",
     "licensesUrl": "https://github.com/googleads/googleads-mobile-unity/blob/main/LICENSE",
     "dependencies": {
-      "com.google.external-dependency-manager": "1.2.178"
+      "com.google.external-dependency-manager": "1.2.179"
     },
     "keywords": [
       "Google",
