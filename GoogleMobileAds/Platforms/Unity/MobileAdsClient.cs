@@ -13,8 +13,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
-using GoogleMobileAds.Unity;
 using GoogleMobileAds.Api;
 using UnityEngine;
 using UnityEngine.UI;
@@ -114,6 +114,8 @@ namespace GoogleMobileAds.Unity
 
         public void SetiOSAppPauseOnBackground(bool pause) {}
 
+        public void DisableSDKCrashReporting() {}
+
         public float GetDeviceScale()
         {
             return 0;
@@ -173,8 +175,11 @@ namespace GoogleMobileAds.Unity
         {
             return null;
         }
-
-        public void SetServerSideVerificationOptions(
+        public void Preload(List<PreloadConfiguration> configurations,
+                Action<PreloadConfiguration> onAdsAvailable,
+                Action<PreloadConfiguration> onAdsExhausted)
+        { }
+            public void SetServerSideVerificationOptions(
             ServerSideVerificationOptions serverSideVerificationOptions) {}
 
         public void OpenAdInspector(Action<AdInspectorErrorClientEventArgs> onAdInspectorClosed)

@@ -51,7 +51,18 @@ namespace GoogleMobileAds.Android
         public const string PlayStorePurchaseListenerClassName =
                 "com.google.android.gms.ads.purchase.PlayStorePurchaseListener";
 
+        public const string PublisherPrivacyPersonalizationStateEnumName =
+            "com.google.android.gms.ads.RequestConfiguration$PublisherPrivacyPersonalizationState";
+
         public const string MobileAdsClassName = "com.google.android.gms.ads.MobileAds";
+
+        public const string PreloadConfigurationClassName = "com.google.android.gms.ads.preload.PreloadConfiguration";
+
+        public const string PreloadConfigurationBuilderClassName = "com.google.android.gms.ads.preload.PreloadConfiguration$Builder";
+
+        public const string PreloadListenerClassname = "com.google.android.gms.ads.preload.PreloadCallback";
+
+        public const string AdFormatEnumName = "com.google.android.gms.ads.AdFormat";
 
         public const string RequestConfigurationClassName = "com.google.android.gms.ads.RequestConfiguration";
 
@@ -63,6 +74,12 @@ namespace GoogleMobileAds.Android
         public const string ServerSideVerificationOptionsBuilderClassName =
                 "com.google.android.gms.ads.rewarded.ServerSideVerificationOptions$Builder";
 
+        public const string NativeAdOptionsBuilderClassName =
+            "com.google.android.gms.ads.nativead.NativeAdOptions$Builder";
+
+        public const string VideoOptionsBuilderClassName =
+            "com.google.android.gms.ads.VideoOptions$Builder";
+
         #endregion
 
         #region Google Mobile Ads Unity Plugin class names
@@ -73,9 +90,13 @@ namespace GoogleMobileAds.Android
 
         public const string InterstitialClassName = "com.google.unity.ads.Interstitial";
 
+        public const string InterstitialClassNameGMA = "com.google.android.gms.ads.interstitial.InterstitialAd";
+
         public const string RewardBasedVideoClassName = "com.google.unity.ads.RewardBasedVideo";
 
         public const string UnityRewardedAdClassName = "com.google.unity.ads.UnityRewardedAd";
+
+        public const string RewardedAdClassNameGMA = "com.google.android.gms.ads.rewarded.RewardedAd";
 
         public const string UnityAdListenerClassName = "com.google.unity.ads.UnityAdListener";
 
@@ -109,6 +130,8 @@ namespace GoogleMobileAds.Android
 
         public const string UnityAppOpenAdClassName = "com.google.unity.ads.UnityAppOpenAd";
 
+        public const string AppOpenAdClassNameGMA = "com.google.android.gms.ads.appopen.AppOpenAd";
+
         public const string UnityAppOpenAdCallbackClassName =
                 "com.google.unity.ads.UnityAppOpenAdCallback";
 
@@ -138,7 +161,23 @@ namespace GoogleMobileAds.Android
         public const string UnityApplicationPreferencesClassName =
                 "com.google.unity.ads.UnityApplicationPreferences";
 
-        public const string PreferenceManagerClassName = "android.preference.PreferenceManager";
+        public const string UnityNativeTemplateAdClassName =
+            "com.google.unity.ads.nativead.UnityNativeTemplateAd";
+
+        public const string UnityNativeTemplateAdCallbackClassName =
+            "com.google.unity.ads.nativead.UnityNativeTemplateAdCallback";
+
+        public const string UnityNativeTemplateFontStyleClassName =
+            "com.google.unity.ads.nativead.UnityNativeTemplateFontStyle";
+
+        public const string UnityNativeTemplateStyleClassName =
+            "com.google.unity.ads.nativead.UnityNativeTemplateStyle";
+
+        public const string UnityNativeTemplateTextStyleClassName =
+            "com.google.unity.ads.nativead.UnityNativeTemplateTextStyle";
+
+        public const string UnityNativeTemplateTypeClassName =
+            "com.google.unity.ads.nativead.UnityNativeTemplateType";
 
         #endregion
 
@@ -150,9 +189,13 @@ namespace GoogleMobileAds.Android
 
         #region Android SDK class names
 
+        public const string ColorClassName = "android.graphics.Color";
+        public const string ColorDrawableClassName = "android.graphics.drawable.ColorDrawable";
         public const string BundleClassName = "android.os.Bundle";
-        public const string DateClassName = "java.util.Date";
+        public const string PreferenceManagerClassName = "android.preference.PreferenceManager";
         public const string DisplayMetricsClassName = "android.util.DisplayMetrics";
+        public const string DoubleClassName = "java.lang.Double";
+        public const string DateClassName = "java.util.Date";
 
         #endregion
 
@@ -188,24 +231,6 @@ namespace GoogleMobileAds.Android
                 default:
                     throw new ArgumentException("Invalid AdSize.Type provided for ad size.");
             }
-        }
-
-        public static int GetAppOpenAdOrientation(ScreenOrientation orientation)
-        {
-            string orientationFieldName;
-            switch (orientation)
-            {
-                case ScreenOrientation.LandscapeLeft:
-                case ScreenOrientation.LandscapeRight:
-                    orientationFieldName = "APP_OPEN_AD_ORIENTATION_LANDSCAPE";
-                    break;
-                default:
-                    orientationFieldName = "APP_OPEN_AD_ORIENTATION_PORTRAIT";
-                    break;
-            }
-
-            AndroidJavaClass appOpenAdClass = new AndroidJavaClass(AppOpenAdClassName);
-            return appOpenAdClass.GetStatic<int>(orientationFieldName);
         }
 
         public static Dictionary<string, string> GetDictionary(AndroidJavaObject androidBundle)
@@ -415,6 +440,48 @@ namespace GoogleMobileAds.Android
 
             return serverSideVerificationOptionsBuilder.Call<AndroidJavaObject>("build");
         }
+
+        public static AndroidJavaObject GetNativeAdOptionsJavaObject(
+            NativeAdOptions nativeAdOptions)
+        {
+            AndroidJavaObject nativeAdOptionsBuilder =
+                new AndroidJavaObject(NativeAdOptionsBuilderClassName);
+            nativeAdOptionsBuilder.Call<AndroidJavaObject>("setAdChoicesPlacement",
+                                                        (int)nativeAdOptions.AdChoicesPlacement);
+            nativeAdOptionsBuilder.Call<AndroidJavaObject>("setMediaAspectRatio",
+                                                        (int)nativeAdOptions.MediaAspectRatio);
+
+            AndroidJavaObject videoOptions =
+                Utils.GetVideoOptionsJavaObject(nativeAdOptions.VideoOptions);
+            nativeAdOptionsBuilder.Call<AndroidJavaObject>("setVideoOptions", videoOptions);
+            return nativeAdOptionsBuilder.Call<AndroidJavaObject>("build");
+        }
+
+        public static AndroidJavaObject GetVideoOptionsJavaObject(VideoOptions videoOptions)
+        {
+            AndroidJavaObject videoOptionsBuilder =
+                new AndroidJavaObject(VideoOptionsBuilderClassName);
+            videoOptionsBuilder.Call<AndroidJavaObject>("setClickToExpandRequested",
+                                                      (bool)videoOptions.ClickToExpandRequested);
+            videoOptionsBuilder.Call<AndroidJavaObject>("setCustomControlsRequested",
+                                                      (bool)videoOptions.CustomControlsRequested);
+            videoOptionsBuilder.Call<AndroidJavaObject>("setStartMuted",
+                                                      (bool)videoOptions.StartMuted);
+            return videoOptionsBuilder.Call<AndroidJavaObject>("build");
+        }
+
+        #endregion
+        
+        #region Internal utility methods
+
+        internal static AndroidJavaObject GetCurrentActivityAndroidJavaObject()
+        {
+            AndroidJavaClass unityPlayer = new AndroidJavaClass(UnityActivityClassName);
+            AndroidJavaObject currentActivity =
+                    unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            return currentActivity;
+        }
+
         #endregion
     }
 }

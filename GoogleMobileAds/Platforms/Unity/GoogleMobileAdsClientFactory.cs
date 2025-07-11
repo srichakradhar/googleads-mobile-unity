@@ -17,7 +17,6 @@ using GoogleMobileAds;
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
 using UnityEngine.Scripting;
-using GoogleMobileAds.Unity;
 
 namespace GoogleMobileAds
 {
@@ -26,52 +25,57 @@ namespace GoogleMobileAds
     {
         public IAppStateEventClient BuildAppStateEventClient()
         {
-            return AppStateEventClient.Instance;
+            return GoogleMobileAds.Common.AppStateEventClient.Instance;
         }
 
         public IAppOpenAdClient BuildAppOpenAdClient()
         {
-            return new AppOpenAdClient();
+            return new GoogleMobileAds.Unity.AppOpenAdClient();
         }
 
         public IBannerClient BuildBannerClient()
         {
-            return new BannerClient();
+            return new GoogleMobileAds.Unity.BannerClient();
         }
 
         public IAdManagerBannerClient BuildAdManagerBannerClient()
         {
-            return new AdManagerBannerClient();
+            return new GoogleMobileAds.Unity.AdManagerBannerClient();
         }
 
         public IInterstitialClient BuildInterstitialClient()
         {
-            return new InterstitialClient();
+            return new GoogleMobileAds.Unity.InterstitialClient();
         }
 
         public IAdManagerInterstitialClient BuildAdManagerInterstitialClient()
         {
-            return new AdManagerInterstitialClient();
+            return new GoogleMobileAds.Unity.AdManagerInterstitialClient();
         }
 
         public IRewardedAdClient BuildRewardedAdClient()
         {
-            return new RewardedAdClient();
+            return new GoogleMobileAds.Unity.RewardedAdClient();
         }
 
         public IRewardedInterstitialAdClient BuildRewardedInterstitialAdClient()
         {
-            return new RewardedInterstitialAdClient();
+            return new GoogleMobileAds.Unity.RewardedInterstitialAdClient();
+        }
+
+        public INativeOverlayAdClient BuildNativeOverlayAdClient()
+        {
+            return new GoogleMobileAds.Unity.NativeOverlayAdClient();
         }
 
         public IApplicationPreferencesClient ApplicationPreferencesInstance()
         {
-            return new ApplicationPreferencesClient();
+            return new GoogleMobileAds.Unity.ApplicationPreferencesClient();
         }
 
         public IMobileAdsClient MobileAdsInstance()
         {
-            return new MobileAdsClient();
+            return new GoogleMobileAds.Unity.MobileAdsClient();
         }
     }
 }

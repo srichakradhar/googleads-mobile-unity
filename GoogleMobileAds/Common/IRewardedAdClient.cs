@@ -25,7 +25,7 @@ namespace GoogleMobileAds.Common
         // Ad event fired when the rewarded ad has failed to load.
         event EventHandler<LoadAdErrorClientEventArgs> OnAdFailedToLoad;
         // Ad event fired when the rewarded ad is estimated to have earned money.
-        event EventHandler<AdValueEventArgs> OnPaidEvent;
+        event Action<AdValue> OnPaidEvent;
         // Ad event fired when the rewarded ad has rewarded the user.
         event EventHandler<Reward> OnUserEarnedReward;
         // Ad event fired when the full screen content has failed to be presented.
@@ -50,6 +50,15 @@ namespace GoogleMobileAds.Common
 
         // Shows the rewarded ad on the screen.
         void Show();
+
+        // Returns the ad unit ID.
+        string GetAdUnitID();
+
+        // Verify if an ad is preloaded and available to show.
+        bool IsAdAvailable(string adUnitId);
+
+        // Returns the next pre-loaded app open ad and null if no ad is available.
+        IRewardedAdClient PollAd(string adUnitId);
 
         // Sets the server side verification options
         void SetServerSideVerificationOptions(ServerSideVerificationOptions serverSideVerificationOptions);

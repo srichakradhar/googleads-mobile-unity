@@ -63,6 +63,46 @@
                 }];
 }
 
++ (BOOL)isPreloadedAdAvailable:(NSString *)adUnitId {
+    return [GADRewardedAd isPreloadedAdAvailable:adUnitId];
+}
+
+- (void)preloadedAdWithAdUnitID:(nonnull NSString *)adUnitId {
+    __weak GADURewardedAd *weakSelf = self;
+    GADURewardedAd *strongSelf = weakSelf;
+    if (!strongSelf) {
+      return;
+    }
+    strongSelf.rewardedAd = [GADRewardedAd preloadedAdWithAdUnitID:adUnitId];
+    if (!strongSelf.rewardedAd) {
+      if (strongSelf.adFailedToLoadCallback) {
+          NSError *error = [[NSError alloc] initWithDomain:GADErrorDomain
+                                                        code:GADErrorInternalError
+                                                    userInfo:nil];
+        strongSelf.adFailedToLoadCallback(strongSelf.rewardedAdClient,
+                                          (__bridge GADUTypeErrorRef)error);
+      }
+      return;
+    }
+    strongSelf.rewardedAd.fullScreenContentDelegate = strongSelf;
+    strongSelf.rewardedAd.paidEventHandler = ^void(GADAdValue *_Nonnull adValue) {
+      GADURewardedAd *strongSecondSelf = weakSelf;
+      if (!strongSecondSelf) {
+        return;
+      }
+      if (strongSecondSelf.paidEventCallback) {
+        int64_t valueInMicros =
+            [adValue.value decimalNumberByMultiplyingByPowerOf10:6].longLongValue;
+        strongSecondSelf.paidEventCallback(
+            strongSecondSelf.rewardedAdClient, (int)adValue.precision, valueInMicros,
+            [adValue.currencyCode cStringUsingEncoding:NSUTF8StringEncoding]);
+      }
+    };
+    if (strongSelf.adLoadedCallback) {
+      strongSelf.adLoadedCallback(self.rewardedAdClient);
+    }
+}
+
 - (void)show {
   UIViewController *unityController = [GADUPluginUtil unityGLViewController];
   __weak GADURewardedAd *weakSelf = self;
@@ -114,6 +154,7 @@
 }
 
 - (void)adWillPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
+    NSLog(@"Preload ad presented.");
   if (GADUPluginUtil.pauseOnBackground) {
     UnityPause(YES);
   }
@@ -123,6 +164,7 @@
 }
 
 - (void)adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
+    NSLog(@"Preload ad dismissed.");
   extern bool _didResignActive;
   if (_didResignActive) {
     // We are in the middle of the shutdown sequence, and at this point unity runtime is already
@@ -140,12 +182,14 @@
 }
 
 - (void)adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
+    NSLog(@"Preload ad recorded impression.");
   if (self.adDidRecordImpressionCallback) {
     self.adDidRecordImpressionCallback(self.rewardedAdClient);
   }
 }
 
 - (void)adDidRecordClick:(nonnull id<GADFullScreenPresentingAd>)ad {
+    NSLog(@"Preload ad recorded click.");
   if (self.adDidRecordClickCallback) {
     self.adDidRecordClickCallback(self.rewardedAdClient);
   }

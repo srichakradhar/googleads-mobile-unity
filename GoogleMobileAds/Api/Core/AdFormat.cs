@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Google, Inc.
+// Copyright (C) 2024 Google, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace GoogleMobileAds.Api
 {
-    // Event arguments that return when an ad operation fails.
-
-    /// @deprecated Use @ref AdError directly.
-    public class AdErrorEventArgs : EventArgs
+    /// <summary>
+    /// Format of the ad being requested.
+    /// </summary>
+    public enum AdFormat
     {
-        // AdError Object that returns when an ad operation fails.
-        public AdError AdError { get; set; }
-
-        [Obsolete ("use AdError.GetMessage() instead.")]
-        public string Message { get; set; }
+        /// Banner ad format.
+        BANNER = 0,
+        /// Interstitial ad format.
+        INTERSTITIAL = 1,
+        /// Rewarded ad format.
+        REWARDED = 2,
+        /// Rewarded interstitial ad format.
+        REWARDED_INTERSTITIAL = 3,
+        /// Native ad format.
+        NATIVE = 4,
+        /// App open ad format.
+        APP_OPEN_AD = 5
     }
 }

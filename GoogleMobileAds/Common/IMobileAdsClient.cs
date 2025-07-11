@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 
 using GoogleMobileAds.Api;
 
@@ -41,6 +42,9 @@ namespace GoogleMobileAds.Common
         // Set whether an iOS app should pause when a full screen ad is displayed.
         void SetiOSAppPauseOnBackground(bool pause);
 
+        // Disables automated SDK crash reporting.
+        void DisableSDKCrashReporting();
+
         // Returns the scale for the current device.
         float GetDeviceScale();
 
@@ -49,6 +53,16 @@ namespace GoogleMobileAds.Common
 
         // Set Global Request Configuration to Mobile Ads SDK
         void SetRequestConfiguration(RequestConfiguration requestConfiguration);
+
+        /// <summary>
+        /// Preload ads for the given configurations.
+        /// </summary>
+        /// <param name="configurations">The configurations to preload ads.</param>
+        /// <param name="onAdsAvailable">Called when a new ad is available.</param>
+        /// <param name="onAdsExhausted">Called when the ad is exhausted.</param>
+        void Preload(List<PreloadConfiguration> configurations,
+                Action<PreloadConfiguration> onAdsAvailable,
+                Action<PreloadConfiguration> onAdsExhausted);
 
         // Get Mobile Ads SDK's Global Request Configuration
         RequestConfiguration GetRequestConfiguration();

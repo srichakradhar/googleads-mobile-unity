@@ -57,7 +57,7 @@ namespace GoogleMobileAds.iOS
 
         public event EventHandler<LoadAdErrorClientEventArgs> OnAdFailedToLoad;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event EventHandler<AdErrorClientEventArgs> OnAdFailedToPresentFullScreenContent;
 
@@ -115,6 +115,25 @@ namespace GoogleMobileAds.iOS
             Externs.GADUShowInterstitial(this.InterstitialPtr);
         }
 
+        // Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return Externs.GADUGetInterstitialAdUnitID(this.InterstitialPtr);
+        }
+        
+        // Verify if an ad is preloaded and available to show.
+        public bool IsAdAvailable(string adUnitId)
+        {
+            return Externs.GADUInterstitialIsPreloadedAdAvailable(adUnitId);
+        }
+
+        // Returns the next pre-loaded interstitial ad and null if no ad is available.
+        public IInterstitialClient PollAd(string adUnitId)
+        {
+            Externs.GADUInterstitialPreloadedAdWithAdUnitID(this.InterstitialPtr, adUnitId);
+            return this;
+        }
+
         public IResponseInfoClient GetResponseInfoClient()
         {
             return new ResponseInfoClient(ResponseInfoClientType.AdLoaded, this.InterstitialPtr);
@@ -128,8 +147,12 @@ namespace GoogleMobileAds.iOS
 
         public void Dispose()
         {
+            if (this.interstitialClientPtr != IntPtr.Zero)
+            {
+                ((GCHandle)this.interstitialClientPtr).Free();
+            }
             this.DestroyInterstitial();
-            ((GCHandle)this.interstitialClientPtr).Free();
+            Debug.Log("Destroyed");
         }
 
         ~InterstitialClient()
@@ -179,12 +202,7 @@ namespace GoogleMobileAds.iOS
                     Value = value,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                client.OnPaidEvent(client, args);
+                client.OnPaidEvent(adValue);
             }
         }
 

@@ -31,7 +31,7 @@ namespace GoogleMobileAds.Unity
         // Ad event fired when the rewarding ad has failed to load.
         public event EventHandler<LoadAdErrorClientEventArgs> OnAdFailedToLoad;
         // Ad event fired when the rewarding ad is estimated to have earned money.
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
         // Ad event fired when the rewarding ad has rewarded the user.
         public event EventHandler<Reward> OnUserEarnedReward;
         // Ad event fired when the full screen content has failed to be presented.
@@ -100,6 +100,7 @@ namespace GoogleMobileAds.Unity
         // Load a rewarding ad.
         public void LoadAd(string adUnitId, AdRequest request)
         {
+            base._adUnitId = adUnitId;
             if (Screen.width > Screen.height) //Landscape
             {
                 LoadAndSetPrefabAd(prefabAds[new AdSize(1024, 768)]);
@@ -173,6 +174,18 @@ namespace GoogleMobileAds.Unity
         public void SetServerSideVerificationOptions(ServerSideVerificationOptions serverSideVerificationOptions)
         {
 
+        }
+
+        // Verify if an ad is preloaded and available to show.
+        public bool IsAdAvailable(string adUnitId)
+        {
+            return false;
+        }
+
+        // Returns the next pre-loaded app open ad and null if no ad is available.
+        public IRewardedAdClient PollAd(string adUnitId)
+        {
+            return new RewardedAdClient();
         }
     }
 }

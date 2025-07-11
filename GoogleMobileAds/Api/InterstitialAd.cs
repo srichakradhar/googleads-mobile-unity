@@ -58,15 +58,37 @@ namespace GoogleMobileAds.Api
         public event Action<AdError> OnAdFullScreenContentFailed;
 
         protected internal IInterstitialClient _client;
+        protected internal static IInterstitialClient _preloadClient;
         protected internal bool _canShowAd;
 
-        protected internal InterstitialAd() {}
+        protected internal InterstitialAd() { }
 
         private InterstitialAd(IInterstitialClient client)
         {
             _client = client;
             _canShowAd = true;
             RegisterAdEvents();
+        }
+
+        /// <summary>
+        /// Verify if an ad is preloaded and available to show.
+        /// </summary>
+        /// <param name="adUnitId">The ad Unit Id of the ad to verify. </param>
+        public static bool IsAdAvailable(string adUnitId)
+        {
+            _preloadClient = MobileAds.GetClientFactory().BuildInterstitialClient();
+            return _preloadClient.IsAdAvailable(adUnitId);
+        }
+
+        /// <summary>
+        /// Returns the next pre-loaded app open ad and null if no ad is available.
+        /// </summary>
+        /// <param name="adUnitId">The ad Unit ID of the ad to poll.</param>
+        public static InterstitialAd PollAd(string adUnitId)
+        {
+            _preloadClient = MobileAds.GetClientFactory().BuildInterstitialClient();
+            _preloadClient.CreateInterstitialAd();
+            return new InterstitialAd(_preloadClient.PollAd(adUnitId));
         }
 
         /// <summary>
@@ -136,6 +158,14 @@ namespace GoogleMobileAds.Api
         }
 
         /// <summary>
+        /// Returns the ad unit ID.
+        /// </summary>
+        public string GetAdUnitID()
+        {
+            return _client != null ? _client.GetAdUnitID() : null;
+        }
+
+        /// <summary>
         /// Returns the ad request response info.
         /// </summary>
         public ResponseInfo GetResponseInfo()
@@ -199,13 +229,13 @@ namespace GoogleMobileAds.Api
                     }
                 });
             };
-            _client.OnPaidEvent += (sender, args) =>
+            _client.OnPaidEvent += (adValue) =>
             {
                 MobileAds.RaiseAction(() =>
                 {
                     if (OnAdPaid != null)
                     {
-                        OnAdPaid(args.AdValue);
+                        OnAdPaid(adValue);
                     }
                 });
             };

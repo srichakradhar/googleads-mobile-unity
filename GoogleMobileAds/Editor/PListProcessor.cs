@@ -111,6 +111,8 @@ public static class PListProcessor
         List<string> skAdNetworkItems = new List<string>();
 
         string path = Path.Combine(Application.dataPath, SKADNETWORKS_RELATIVE_PATH);
+		Debug.Log("Application.dataPath: " + Application.dataPath);
+		Debug.Log("SKADNETWORKS_FILE path: " + path);
 
         /*
          * Handle importing GMA via Unity Package Manager.
@@ -119,7 +121,9 @@ public static class PListProcessor
         if (pathUtils.IsPackageRootPath())
         {
             string parentDirectoryPath = pathUtils.GetDirectoryAssetPath();
+			Debug.Log("parentDirectoryPath: " + parentDirectoryPath);
             path = Path.Combine(parentDirectoryPath, SKADNETWORKS_FILE_NAME);
+			Debug.Log("SKADNETWORKS_FILE path: " + path);
         }
 
         try

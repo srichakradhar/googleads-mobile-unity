@@ -53,6 +53,7 @@ public class EditorPathUtils : ScriptableObject
      */
     public bool IsPackageRootPath()
     {
+		Debug.Log("GetFilePath: " + GetFilePath());
         return GetFilePath().StartsWith("Packages");
     }
 }

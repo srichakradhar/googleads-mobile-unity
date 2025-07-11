@@ -64,6 +64,26 @@
       }];
 }
 
+- (void)preloadedAdWithAdUnitID:(NSString *)adUnitId {
+    __weak GADUInterstitial *weakSelf = self;
+  self.interstitialAd = [GADInterstitialAd preloadedAdWithAdUnitID: adUnitId];
+    if (!self.interstitialAd) {
+      return;
+    }
+  self.interstitialAd.fullScreenContentDelegate = self;
+  self.interstitialAd.paidEventHandler = ^void(GADAdValue *_Nonnull adValue) {
+    GADUInterstitial *strongSecondSelf = weakSelf;
+    if (!strongSecondSelf) {
+      return;
+    }
+    if (strongSecondSelf.paidEventCallback) {
+      int64_t valueInMicros =
+        [adValue.value decimalNumberByMultiplyingByPowerOf10:6].longLongValue;
+      strongSecondSelf.paidEventCallback(strongSecondSelf.interstitialClient, (int)adValue.precision, valueInMicros, [adValue.currencyCode cStringUsingEncoding:NSUTF8StringEncoding]);
+    }
+  };
+}
+
 - (void)show {
   UIViewController *unityController = [GADUPluginUtil unityGLViewController];
   [self.interstitialAd presentFromRootViewController:unityController];
@@ -71,6 +91,10 @@
 
 - (GADResponseInfo *)responseInfo {
   return self.interstitialAd.responseInfo;
+}
+
++ (BOOL)isPreloadedAdAvailable:(NSString *)adUnitId {
+    return [GADInterstitialAd isPreloadedAdAvailable:adUnitId];
 }
 
 #pragma mark GADFullScreenContentDelegate implementation
@@ -88,12 +112,14 @@
   if (GADUPluginUtil.pauseOnBackground) {
     UnityPause(YES);
   }
+  NSLog(@"Ad will be presented.");
   if (self.adWillPresentFullScreenContentCallback) {
     self.adWillPresentFullScreenContentCallback(self.interstitialClient);
   }
 }
 
 - (void)adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
+  NSLog(@"Ad dismissed.");
   extern bool _didResignActive;
   if (_didResignActive) {
     // We are in the middle of the shutdown sequence, and at this point unity runtime is already
@@ -111,12 +137,14 @@
 }
 
 - (void)adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
+  NSLog(@"Ad recorded impression.");
   if (self.adDidRecordImpressionCallback) {
     self.adDidRecordImpressionCallback(self.interstitialClient);
   }
 }
 
 - (void)adDidRecordClick:(nonnull id<GADFullScreenPresentingAd>)ad {
+  NSLog(@"Ad recorded click.");
   if (self.adDidRecordClickCallback) {
     self.adDidRecordClickCallback(self.interstitialClient);
   }

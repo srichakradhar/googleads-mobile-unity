@@ -37,7 +37,7 @@ namespace GoogleMobileAds.Android
 
         public event EventHandler<Reward> OnUserEarnedReward;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event EventHandler<AdErrorClientEventArgs> OnAdFailedToPresentFullScreenContent;
 
@@ -83,6 +83,12 @@ namespace GoogleMobileAds.Android
         public void SetServerSideVerificationOptions(ServerSideVerificationOptions serverSideVerificationOptions)
         {
             androidRewardedInterstitialAd.Call("setServerSideVerificationOptions", Utils.GetServerSideVerificationOptionsJavaObject(serverSideVerificationOptions));
+        }
+
+        // Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return this.androidRewardedInterstitialAd.Call<string>("getAdUnitId");
         }
 
         public IResponseInfoClient GetResponseInfoClient()
@@ -185,16 +191,10 @@ namespace GoogleMobileAds.Android
                     Value = valueInMicros,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                this.OnPaidEvent(this, args);
+                this.OnPaidEvent(adValue);
             }
         }
 
         #endregion
-
     }
 }

@@ -20,10 +20,10 @@ using UnityEngine.Scripting;
 using GoogleMobileAds;
 using GoogleMobileAds.Api;
 using GoogleMobileAds.Common;
-using GoogleMobileAds.Android;
 
 namespace GoogleMobileAds
 {
+    [Preserve]
     public class GoogleMobileAdsClientFactory : IClientFactory
     {
         public IAppStateEventClient BuildAppStateEventClient()
@@ -40,7 +40,7 @@ namespace GoogleMobileAds
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                return new AppOpenAdClient();
+                return new GoogleMobileAds.Android.AppOpenAdClient();
             }
             throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
             " on non-Android runtime");
@@ -50,7 +50,7 @@ namespace GoogleMobileAds
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                return new BannerClient();
+                return new GoogleMobileAds.Android.BannerClient();
             }
             throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
             " on non-Android runtime");
@@ -60,7 +60,7 @@ namespace GoogleMobileAds
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                return new AdManagerBannerClient();
+                return new GoogleMobileAds.Android.AdManagerBannerClient();
             }
             throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
             " on non-Android runtime");
@@ -70,7 +70,7 @@ namespace GoogleMobileAds
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                return new InterstitialClient();
+                return new GoogleMobileAds.Android.InterstitialClient();
             }
             throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
             " on non-Android runtime");
@@ -80,7 +80,7 @@ namespace GoogleMobileAds
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                return new AdManagerInterstitialClient();
+                return new GoogleMobileAds.Android.AdManagerInterstitialClient();
             }
             throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
             " on non-Android runtime");
@@ -90,7 +90,7 @@ namespace GoogleMobileAds
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                return new RewardedAdClient();
+                return new GoogleMobileAds.Android.RewardedAdClient();
             }
             throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
             " on non-Android runtime");
@@ -100,7 +100,17 @@ namespace GoogleMobileAds
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                return new RewardedInterstitialAdClient();
+                return new GoogleMobileAds.Android.RewardedInterstitialAdClient();
+            }
+            throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
+            " on non-Android runtime");
+        }
+
+        public INativeOverlayAdClient BuildNativeOverlayAdClient()
+        {
+            if (Application.platform == RuntimePlatform.Android)
+            {
+                return new GoogleMobileAds.Android.NativeOverlayAdClient();
             }
             throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
             " on non-Android runtime");
@@ -110,7 +120,7 @@ namespace GoogleMobileAds
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                return new ApplicationPreferencesClient();
+                return new GoogleMobileAds.Android.ApplicationPreferencesClient();
             }
             throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
             " on non-Android runtime");
@@ -120,7 +130,7 @@ namespace GoogleMobileAds
         {
             if (Application.platform == RuntimePlatform.Android)
             {
-                return MobileAdsClient.Instance;
+                return GoogleMobileAds.Android.MobileAdsClient.Instance;
             }
             throw new InvalidOperationException(@"Called " + MethodBase.GetCurrentMethod().Name +
             " on non-Android runtime");

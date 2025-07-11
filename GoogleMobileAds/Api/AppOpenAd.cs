@@ -60,6 +60,7 @@ namespace GoogleMobileAds.Api
         /// </summary>
         public event Action<AdError> OnAdFullScreenContentFailed;
 
+        private static IAppOpenAdClient _preloadAppOpenAdClient;
         private IAppOpenAdClient _client;
         private bool _canShowAd;
 
@@ -84,16 +85,19 @@ namespace GoogleMobileAds.Api
                 return;
             }
 
-            var client = MobileAds.GetClientFactory().BuildAppOpenAdClient();
-            client.CreateAppOpenAd();
-            client.OnAdLoaded += (sender, args) =>
+            if (_preloadAppOpenAdClient == null)
+            {
+                _preloadAppOpenAdClient = MobileAds.GetClientFactory().BuildAppOpenAdClient();
+                _preloadAppOpenAdClient.CreateAppOpenAd();
+            }
+            _preloadAppOpenAdClient.OnAdLoaded += (sender, args) =>
             {
                 MobileAds.RaiseAction(() =>
                 {
-                    adLoadCallback(new AppOpenAd(client), null);
+                    adLoadCallback(new AppOpenAd(_preloadAppOpenAdClient), null);
                 });
             };
-            client.OnAdFailedToLoad += (sender, args) =>
+            _preloadAppOpenAdClient.OnAdFailedToLoad += (sender, args) =>
             {
                 LoadAdError loadAdError = new LoadAdError(args.LoadAdErrorClient);
                 MobileAds.RaiseAction(() =>
@@ -101,43 +105,46 @@ namespace GoogleMobileAds.Api
                     adLoadCallback(null, loadAdError);
                 });
             };
-            client.LoadAd(adUnitId, request);
+            _preloadAppOpenAdClient.LoadAd(adUnitId, request);
         }
 
         /// <summary>
-        /// Loads an app open ad.
+        /// Verify if an ad is preloaded and available to show.
         /// </summary>
-        /// @deprecated Use @ref AppOpen.Load(string, AdRequest, Action<AppOpenAd, LoadAdError>).
-        [Obsolete("Use Load(string, AdRequest, Action<AppOpenAd, LoadAdError>) instead.")]
-        public static void Load(string adUnitId,
-                                ScreenOrientation orientation,
-                                AdRequest request,
-                                Action<AppOpenAd, LoadAdError> adLoadCallback)
+        /// <param name="adUnitId">The ad Unit Id of the ad to verify. </param>
+        public static bool IsAdAvailable(string adUnitId)
         {
-            if (adLoadCallback == null)
+            if (string.IsNullOrEmpty(adUnitId))
             {
-                UnityEngine.Debug.LogError("adLoadCallback is null. No ad was loaded.");
-                return;
+                Debug.LogError("adUnitId cannot be null or empty.");
+                return false;
             }
+            if (_preloadAppOpenAdClient == null)
+            {
+                _preloadAppOpenAdClient = MobileAds.GetClientFactory().BuildAppOpenAdClient();
+            }
+            return _preloadAppOpenAdClient == null ? false :
+                    _preloadAppOpenAdClient.IsAdAvailable(adUnitId);
+        }
 
-            var client = MobileAds.GetClientFactory().BuildAppOpenAdClient();
-            client.CreateAppOpenAd();
-            client.OnAdLoaded += (sender, args) =>
+        /// <summary>
+        /// Returns the next pre-loaded app open ad and null if no ad is available.
+        /// </summary>
+        /// <param name="adUnitId">The ad Unit ID of the ad to poll.</param>
+        public static AppOpenAd PollAd(string adUnitId)
+        {
+            if (string.IsNullOrEmpty(adUnitId))
             {
-                MobileAds.RaiseAction(() =>
-                {
-                    adLoadCallback(new AppOpenAd(client), null);
-                });
-            };
-            client.OnAdFailedToLoad += (sender, args) =>
+                Debug.LogError("adUnitId cannot be null or empty.");
+                return null;
+            }
+            if (_preloadAppOpenAdClient == null)
             {
-                LoadAdError loadAdError = new LoadAdError(args.LoadAdErrorClient);
-                MobileAds.RaiseAction(() =>
-                {
-                    adLoadCallback(null, loadAdError);
-                });
-            };
-            client.LoadAd(adUnitId, request, orientation);
+                _preloadAppOpenAdClient = MobileAds.GetClientFactory().BuildAppOpenAdClient();
+            }
+            _preloadAppOpenAdClient.CreateAppOpenAd();
+            return _preloadAppOpenAdClient == null ? null :
+                    new AppOpenAd(_preloadAppOpenAdClient.PollAd(adUnitId));
         }
 
         /// <summary>
@@ -172,6 +179,14 @@ namespace GoogleMobileAds.Api
             {
                 _client.DestroyAppOpenAd();
             }
+        }
+
+        /// <summary>
+        /// Returns the ad unit ID.
+        /// </summary>
+        public string GetAdUnitID()
+        {
+            return _client != null ? _client.GetAdUnitID() : null;
         }
 
         /// <summary>
@@ -240,13 +255,13 @@ namespace GoogleMobileAds.Api
                 });
             };
 
-            _client.OnPaidEvent += (sender, args) =>
+            _client.OnPaidEvent += (adValue) =>
             {
                 MobileAds.RaiseAction(() =>
                 {
                     if (OnAdPaid != null)
                     {
-                        OnAdPaid(args.AdValue);
+                        OnAdPaid(adValue);
                     }
                 });
             };

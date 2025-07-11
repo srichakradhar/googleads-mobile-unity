@@ -14,13 +14,48 @@
 
 using System;
 
+using GoogleMobileAds.Api;
 using GoogleMobileAds.Api.AdManager;
 
 namespace GoogleMobileAds.Common
 {
-    public interface IAdManagerInterstitialClient : IInterstitialClient
+    public interface IAdManagerInterstitialClient
     {
         // Ad event fired when the ad sends a message to the application.
         event Action<AppEvent> OnAppEvent;
+        // Ad event fired when the interstitial ad has been received.
+        event EventHandler<EventArgs> OnAdLoaded;
+        // Ad event fired when the interstitial ad has failed to load.
+        event EventHandler<LoadAdErrorClientEventArgs> OnAdFailedToLoad;
+        // Ad event fired when the interstitial ad is estimated to have earned money.
+        event Action<AdValue> OnPaidEvent;
+        // Ad event fired when the full screen content has failed to be presented.
+        event EventHandler<AdErrorClientEventArgs> OnAdFailedToPresentFullScreenContent;
+        // Ad event fired when the full screen content has been presented.
+        event EventHandler<EventArgs> OnAdDidPresentFullScreenContent;
+        // Ad event fired when the full screen content has been dismissed.
+        event EventHandler<EventArgs> OnAdDidDismissFullScreenContent;
+        // Ad event fired when an ad impression has been recorded.
+        event EventHandler<EventArgs> OnAdDidRecordImpression;
+        // Ad event fired when an ad has been clicked.
+        event Action OnAdClicked;
+
+        // Creates an interstitial ad.
+        void CreateInterstitialAd();
+
+        // Loads an interstitial ad.
+        void LoadAd(string adUnitID, AdRequest request);
+
+        // Shows the interstitial ad on the screen.
+        void Show();
+
+        // Returns the ad unit ID.
+        string GetAdUnitID();
+
+        // Returns ad request Response info client.
+        IResponseInfoClient GetResponseInfoClient();
+
+        // Destroys the interstitial ad.
+        void DestroyInterstitial();
     }
 }

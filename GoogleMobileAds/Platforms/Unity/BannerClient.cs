@@ -34,7 +34,7 @@ namespace GoogleMobileAds.Unity
         // Ad event fired when the banner ad is closed.
         public event EventHandler<EventArgs> OnAdClosed;
         // Ad event fired when the banner ad is estimated to have earned money.
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event Action OnAdClicked;
 
@@ -84,6 +84,7 @@ namespace GoogleMobileAds.Unity
         // Creates a banner view and adds it to the view hierarchy.
         public virtual void CreateBannerView(string adUnitId, AdSize adSize, AdPosition position)
         {
+            base._adUnitId = adUnitId;
             if (adSize.AdType == AdSize.Type.AnchoredAdaptive)
             {
                 LoadAndSetPrefabAd("PlaceholderAds/Banners/ADAPTIVE");
@@ -109,6 +110,7 @@ namespace GoogleMobileAds.Unity
         // Creates a banner view and adds it to the view hierarchy with a custom position.
         public virtual void CreateBannerView(string adUnitId, AdSize adSize, int x, int y)
         {
+            base._adUnitId = adUnitId;
             if (adSize.AdType == AdSize.Type.AnchoredAdaptive)
             {
                 LoadAndSetPrefabAd("PlaceholderAds/Banners/ADAPTIVE");
@@ -145,7 +147,7 @@ namespace GoogleMobileAds.Unity
         // Requests a new ad for the banner view.
         public virtual void LoadAd(AdRequest request)
         {
-            Debug.Log("AdBehaviour: " + AdBehaviour);
+
             if (prefabAd != null) {
                 ShowBannerView();
                 if (OnAdLoaded != null)
@@ -233,6 +235,12 @@ namespace GoogleMobileAds.Unity
             rect.anchorMin = new Vector2(0, 1);
             rect.anchorMax = new Vector2(0, 1);
             rect.anchoredPosition = new Vector2(xWithOffset, -yWithOffset);
+        }
+
+        // Indicates whether the last loaded ad is a collapsible banner.
+        public bool IsCollapsible()
+        {
+            return false;
         }
 
         protected internal void SetAndStretchAd(GameObject dummyAd, AdPosition pos, AdSize adSize)
@@ -337,6 +345,5 @@ namespace GoogleMobileAds.Unity
                 Debug.Log("Invalid Placeholder Ad");
             }
         }
-
     }
 }

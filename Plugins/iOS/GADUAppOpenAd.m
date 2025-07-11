@@ -18,7 +18,7 @@
   NSError *_lastPresentError;
 }
 
-- (instancetype)initWithAppOpenAdClientReference:(GADUTypeAppOpenAdClientRef *)appOpenAdClient {
+- (nonnull instancetype)initWithAppOpenAdClientReference:(_Nonnull GADUTypeAppOpenAdClientRef *_Nonnull)appOpenAdClient {
   self = [super init];
   _appOpenAdClient = appOpenAdClient;
   return self;
@@ -36,7 +36,7 @@
                  }
                  if (error) {
                    if (strongSelf.adFailedToLoadCallback) {
-                     _lastLoadError = error;
+                     self->_lastLoadError = error;
                      strongSelf.adFailedToLoadCallback(strongSelf.appOpenAdClient,
                                                        (__bridge GADUTypeErrorRef)error);
                    }
@@ -63,49 +63,27 @@
                }];
 }
 
-- (void)loadWithAdUnitID:(NSString *)adUnit
-             orientation:(GADUScreenOrientation)orientation
-                 request:(GADRequest *)request {
+- (void)preloadedAdWithAdUnitID:(nonnull NSString *)adUnitId {
+  self.appOpenAd = [GADAppOpenAd preloadedAdWithAdUnitID:adUnitId];
+  self.appOpenAd.fullScreenContentDelegate = self;
   __weak GADUAppOpenAd *weakSelf = self;
+  self.appOpenAd.paidEventHandler = ^void(GADAdValue *_Nonnull adValue) {
+    GADUAppOpenAd *strongSecondSelf = weakSelf;
+    if (!strongSecondSelf) {
+      return;
+    }
+    if (strongSecondSelf.paidEventCallback) {
+      int64_t valueInMicros =
+          [adValue.value decimalNumberByMultiplyingByPowerOf10:6].longLongValue;
+      strongSecondSelf.paidEventCallback(
+          strongSecondSelf.appOpenAdClient, (int)adValue.precision, valueInMicros,
+          [adValue.currencyCode cStringUsingEncoding:NSUTF8StringEncoding]);
+    }
+  };
+}
 
-  UIInterfaceOrientation uiOrientation =
-      GADUUIInterfaceOrientationForGADUScreenOrientation(orientation);
-
-  [GADAppOpenAd loadWithAdUnitID:adUnit
-                         request:request
-                     orientation:uiOrientation
-               completionHandler:^(GADAppOpenAd *_Nullable appOpenAd, NSError *_Nullable error) {
-                 GADUAppOpenAd *strongSelf = weakSelf;
-                 if (!strongSelf) {
-                   return;
-                 }
-                 if (error) {
-                   if (strongSelf.adFailedToLoadCallback) {
-                     _lastLoadError = error;
-                     strongSelf.adFailedToLoadCallback(strongSelf.appOpenAdClient,
-                                                       (__bridge GADUTypeErrorRef)error);
-                   }
-                   return;
-                 }
-                 strongSelf.appOpenAd = appOpenAd;
-                 strongSelf.appOpenAd.fullScreenContentDelegate = strongSelf;
-                 strongSelf.appOpenAd.paidEventHandler = ^void(GADAdValue *_Nonnull adValue) {
-                   GADUAppOpenAd *strongSecondSelf = weakSelf;
-                   if (!strongSecondSelf) {
-                     return;
-                   }
-                   if (strongSecondSelf.paidEventCallback) {
-                     int64_t valueInMicros =
-                         [adValue.value decimalNumberByMultiplyingByPowerOf10:6].longLongValue;
-                     strongSecondSelf.paidEventCallback(
-                         strongSecondSelf.appOpenAdClient, (int)adValue.precision, valueInMicros,
-                         [adValue.currencyCode cStringUsingEncoding:NSUTF8StringEncoding]);
-                   }
-                 };
-                 if (strongSelf.adLoadedCallback) {
-                   strongSelf.adLoadedCallback(self.appOpenAdClient);
-                 }
-               }];
++ (BOOL)isPreloadedAdAvailable:(NSString *)adUnitId {
+    return [GADAppOpenAd isPreloadedAdAvailable:adUnitId];
 }
 
 - (void)show {

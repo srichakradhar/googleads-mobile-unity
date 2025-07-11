@@ -43,7 +43,7 @@ namespace GoogleMobileAds.Android
 
         public event EventHandler<EventArgs> OnAdClosed;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event Action OnAdClicked;
 
@@ -89,6 +89,12 @@ namespace GoogleMobileAds.Android
             this.bannerView.Call("destroy");
         }
 
+        /// Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return this.bannerView.Call<string>("getAdUnitId");
+        }
+
         // Returns the height of the BannerView in pixels.
         public float GetHeightInPixels()
         {
@@ -113,9 +119,14 @@ namespace GoogleMobileAds.Android
             this.bannerView.Call("setPosition", x, y);
         }
 
+        // Indicates whether the last loaded ad is a collapsible banner.
+        public bool IsCollapsible()
+        {
+            return this.bannerView.Call<bool>("isCollapsible");
+        }
+
         public IResponseInfoClient GetResponseInfoClient()
         {
-
             return new ResponseInfoClient(ResponseInfoClientType.AdLoaded, this.bannerView);
         }
 
@@ -167,12 +178,7 @@ namespace GoogleMobileAds.Android
                     Value = valueInMicros,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                this.OnPaidEvent(this, args);
+                this.OnPaidEvent(adValue);
             }
         }
 

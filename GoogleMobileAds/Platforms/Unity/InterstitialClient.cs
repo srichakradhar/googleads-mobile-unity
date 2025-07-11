@@ -28,7 +28,7 @@ namespace GoogleMobileAds.Unity
 
         public event EventHandler<LoadAdErrorClientEventArgs> OnAdFailedToLoad;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event EventHandler<AdErrorClientEventArgs> OnAdFailedToPresentFullScreenContent;
 
@@ -87,6 +87,7 @@ namespace GoogleMobileAds.Unity
         // Loads a new interstitial request.
         public void LoadAd(string adUnitId, AdRequest request)
         {
+            base._adUnitId = adUnitId;
             if (Screen.width > Screen.height) //Landscape
             {
                 LoadAndSetPrefabAd(prefabAds[new AdSize(1024, 768)]);
@@ -138,12 +139,24 @@ namespace GoogleMobileAds.Unity
             }
         }
 
+        // Verify if an ad is preloaded and available to show.
+        public bool IsAdAvailable(string adUnitId)
+        {
+            return false;
+        }
+
+        // Returns the next pre-loaded app open ad and null if no ad is available.
+        public IInterstitialClient PollAd(string adUnitId)
+        {
+            return new InterstitialClient();
+        }
+
         // Destroys an InterstitialAd.
         public void DestroyInterstitial()
         {
             AdBehaviour.DestroyAd(dummyAd);
             prefabAd = null;
+            base._adUnitId = null;
         }
-
     }
 }

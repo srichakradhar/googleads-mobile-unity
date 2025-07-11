@@ -32,10 +32,11 @@ namespace GoogleMobileAds.Api.AdManager
         /// Raised when the app receives an event from the interstitial ad.
         /// </summary>
         public event Action<AppEvent> OnAppEventReceived;
+        protected internal IAdManagerInterstitialClient _adManagerClient;
 
         private AdManagerInterstitialAd(IAdManagerInterstitialClient client)
         {
-            _client = client;
+            _adManagerClient = client;
             _canShowAd = true;
             RegisterAdEvents();
         }
@@ -76,7 +77,7 @@ namespace GoogleMobileAds.Api.AdManager
         {
             base.RegisterAdEvents();
 
-            ((IAdManagerInterstitialClient)_client).OnAppEvent += (appEvent) =>
+            ((IAdManagerInterstitialClient)_adManagerClient).OnAppEvent += (appEvent) =>
             {
                 MobileAds.RaiseAction(() =>
                 {

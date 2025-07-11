@@ -160,6 +160,14 @@ namespace GoogleMobileAds.Api
         }
 
         /// <summary>
+        /// Returns the ad unit ID.
+        /// </summary>
+        public string GetAdUnitID()
+        {
+            return _client != null ? _client.GetAdUnitID() : null;
+        }
+
+        /// <summary>
         /// Returns the ad request response info.
         /// </summary>
         public ResponseInfo GetResponseInfo()
@@ -225,13 +233,13 @@ namespace GoogleMobileAds.Api
                 });
             };
 
-            _client.OnPaidEvent += (sender, args) =>
+            _client.OnPaidEvent += (adValue) =>
             {
                 MobileAds.RaiseAction(() =>
                 {
                     if (OnAdPaid != null)
                     {
-                        OnAdPaid(args.AdValue);
+                        OnAdPaid(adValue);
                     }
                 });
             };

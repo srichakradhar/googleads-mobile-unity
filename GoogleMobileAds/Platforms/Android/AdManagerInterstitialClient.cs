@@ -35,7 +35,7 @@ namespace GoogleMobileAds.Android
 
         public event EventHandler<EventArgs> OnAdDidRecordImpression;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event Action<AppEvent> OnAppEvent;
 
@@ -78,6 +78,12 @@ namespace GoogleMobileAds.Android
         public void DestroyInterstitial()
         {
             this._androidAdmanagerInterstitialAd.Call("destroy");
+        }
+
+        // Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return this._androidAdmanagerInterstitialAd.Call<string>("getAdUnitId");
         }
 
         // Returns ad request response info
@@ -166,12 +172,7 @@ namespace GoogleMobileAds.Android
                     Value = valueInMicros,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                this.OnPaidEvent(this, args);
+                this.OnPaidEvent(adValue);
             }
         }
 

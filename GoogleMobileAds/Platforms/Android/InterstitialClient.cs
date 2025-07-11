@@ -45,7 +45,7 @@ namespace GoogleMobileAds.Android
 
         public event EventHandler<EventArgs> OnAdDidRecordImpression;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event Action OnAdClicked;
 
@@ -66,7 +66,7 @@ namespace GoogleMobileAds.Android
         // Presents the interstitial ad on the screen.
         public void Show()
         {
-            this.androidInterstitialAd.Call("show");
+            androidInterstitialAd.Call("show");
         }
 
         // Destroys the interstitial ad.
@@ -75,10 +75,26 @@ namespace GoogleMobileAds.Android
             this.androidInterstitialAd.Call("destroy");
         }
 
+        // Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return this.androidInterstitialAd.Call<string>("getAdUnitId");
+        }
+
+        public bool IsAdAvailable(string adUnitId)
+        {
+            return this.androidInterstitialAd.Call<bool>("isAdAvailable", adUnitId);
+        }
+
+        public IInterstitialClient PollAd(string adUnitId)
+        {
+            androidInterstitialAd.Call("pollAd", adUnitId);
+            return this;
+        }
+
         // Returns ad request response info
         public IResponseInfoClient GetResponseInfoClient()
         {
-
             return new ResponseInfoClient(ResponseInfoClientType.AdLoaded, this.androidInterstitialAd);
         }
 
@@ -161,12 +177,7 @@ namespace GoogleMobileAds.Android
                     Value = valueInMicros,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                this.OnPaidEvent(this, args);
+                this.OnPaidEvent(adValue);
             }
         }
 

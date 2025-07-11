@@ -1,15 +1,12 @@
 {
     "name": "GoogleMobileAds.Unity",
-    "rootNamespace": "",
     "references": [
         "GoogleMobileAds.Common",
         "GoogleMobileAds.Core",
         "GoogleMobileAds.Api.Mediation"
     ],
     "includePlatforms": [
-        "Android",
-        "Editor",
-        "iOS"
+        "Editor"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

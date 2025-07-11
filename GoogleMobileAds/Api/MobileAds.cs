@@ -16,6 +16,7 @@ using System;
 using UnityEngine;
 using GoogleMobileAds.Common;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace GoogleMobileAds.Api
 {
@@ -219,9 +220,18 @@ namespace GoogleMobileAds.Api
             });
         }
 
+        /// <summary>
+        /// Preloads ads for the given configurations.
+        /// </summary>
+        /// <param name="configurations">The configurations to preload ads.</param>
+        public static void Preload(List<PreloadConfiguration> configurations, Action<PreloadConfiguration> OnAdsAvailable, Action<PreloadConfiguration> OnAdsExhausted)
+        {
+            Instance.client.Preload(configurations, OnAdsAvailable, OnAdsExhausted);
+        }
+
         internal static IClientFactory GetClientFactory() {
           if (clientFactory == null) {
-            String typeName = null;
+            string typeName;
             if (Application.platform == RuntimePlatform.IPhonePlayer) {
               typeName = "GoogleMobileAds.GoogleMobileAdsClientFactory,GoogleMobileAds.iOS";
             } else if (Application.platform == RuntimePlatform.Android) {
@@ -229,7 +239,9 @@ namespace GoogleMobileAds.Api
             } else {
               typeName = "GoogleMobileAds.GoogleMobileAdsClientFactory,GoogleMobileAds.Unity";
             }
+            Debug.Log("typeName: " + typeName);
             Type type = Type.GetType(typeName);
+            Debug.Log("Type: " + type.ToString());
             clientFactory = (IClientFactory)System.Activator.CreateInstance(type);
           }
           return clientFactory;

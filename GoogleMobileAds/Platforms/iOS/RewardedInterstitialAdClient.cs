@@ -62,7 +62,7 @@ namespace GoogleMobileAds.iOS
 
         public event EventHandler<Reward> OnUserEarnedReward;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event EventHandler<AdErrorClientEventArgs> OnAdFailedToPresentFullScreenContent;
 
@@ -110,7 +110,7 @@ namespace GoogleMobileAds.iOS
         }
 
         public void LoadAd(string adUnitID, AdRequest request) {
-            IntPtr requestPtr = Utils.BuildAdRequest(request);
+            IntPtr requestPtr = Utils.BuildAdManagerAdRequest(request);
             Externs.GADULoadRewardedInterstitialAd(this.RewardedInterstitialAdPtr, adUnitID, requestPtr);
             Externs.GADURelease(requestPtr);
         }
@@ -119,6 +119,12 @@ namespace GoogleMobileAds.iOS
         public void Show()
         {
             Externs.GADUShowRewardedInterstitialAd(this.RewardedInterstitialAdPtr);
+        }
+
+        // Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return Externs.GADUGetRewardedInterstitialAdUnitID(this.RewardedInterstitialAdPtr);
         }
 
         // Sets the server side verification options
@@ -222,12 +228,7 @@ namespace GoogleMobileAds.iOS
                     Value = value,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                client.OnPaidEvent(client, args);
+                client.OnPaidEvent(adValue);
             }
         }
 

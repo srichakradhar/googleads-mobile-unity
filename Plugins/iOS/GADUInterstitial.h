@@ -4,6 +4,7 @@
 
 #import <GoogleMobileAds/GoogleMobileAds.h>
 
+#import "GADInterstitialAd_Preview.h"
 #import "GADUTypes.h"
 
 /// A wrapper around GADInterstitial. Includes the ability to create GADInterstitial objects, load
@@ -54,7 +55,12 @@
 /// Makes an ad request. Additional targeting options can be supplied with a request object.
 - (void)loadWithAdUnitID:(NSString *)adUnitID request:(GADRequest *)request;
 
+/// Loads a preloaded interstitial ad corresponding to the given ad unit ID if available.
+- (void)preloadedAdWithAdUnitID:(nonnull NSString *)adUnitID;
+
 /// Shows the interstitial ad.
 - (void)show;
+
++ (BOOL)isPreloadedAdAvailable:(nonnull NSString *)adUnitID;
 
 @end

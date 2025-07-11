@@ -56,7 +56,7 @@ namespace GoogleMobileAds.iOS
 
         public event EventHandler<EventArgs> OnAdClosed;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event Action OnAdClicked;
 
@@ -193,6 +193,12 @@ namespace GoogleMobileAds.iOS
             this.BannerViewPtr = IntPtr.Zero;
         }
 
+        /// Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return Externs.GADUGetBannerViewAdUnitID(this.BannerViewPtr);
+        }
+
         // Returns the height of the BannerView in pixels.
         public float GetHeightInPixels()
         {
@@ -215,6 +221,12 @@ namespace GoogleMobileAds.iOS
         public void SetPosition(int x, int y)
         {
             Externs.GADUSetBannerViewCustomPosition(this.BannerViewPtr, x, y);
+        }
+
+        // Indicates whether the last loaded ad is a collapsible banner.
+        public bool IsCollapsible()
+        {
+            return Externs.GADUIsBannerViewCollapsible(this.BannerViewPtr);
         }
 
         public IResponseInfoClient GetResponseInfoClient()
@@ -295,12 +307,7 @@ namespace GoogleMobileAds.iOS
                     Value = value,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                client.OnPaidEvent(client, args);
+                client.OnPaidEvent(adValue);
             }
         }
 

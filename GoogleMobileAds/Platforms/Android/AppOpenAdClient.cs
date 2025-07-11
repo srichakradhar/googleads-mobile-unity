@@ -24,6 +24,7 @@ namespace GoogleMobileAds.Android
     public class AppOpenAdClient : AndroidJavaProxy, IAppOpenAdClient
     {
         private AndroidJavaObject androidAppOpenAd;
+        private static AndroidJavaObject staticAppOpenAd;
 
         public AppOpenAdClient() : base(Utils.UnityAppOpenAdCallbackClassName)
         {
@@ -39,7 +40,7 @@ namespace GoogleMobileAds.Android
 
         public event EventHandler<LoadAdErrorClientEventArgs> OnAdFailedToLoad;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event EventHandler<AdErrorClientEventArgs> OnAdFailedToPresentFullScreenContent;
 
@@ -61,16 +62,26 @@ namespace GoogleMobileAds.Android
             androidAppOpenAd.Call("loadAd", adUnitID, Utils.GetAdManagerAdRequestJavaObject(request));
         }
 
-        public void LoadAd(string adUnitID, AdRequest request, ScreenOrientation orientation)
-        {
-            androidAppOpenAd.Call("loadAd", adUnitID,
-                Utils.GetAdRequestJavaObject(request),
-                Utils.GetAppOpenAdOrientation(orientation));
-        }
-
         public void Show()
         {
             androidAppOpenAd.Call("show");
+        }
+
+        // Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return this.androidAppOpenAd.Call<string>("getAdUnitId");
+        }
+
+        public bool IsAdAvailable(string adUnitId)
+        {
+            return androidAppOpenAd.Call<bool>("isAdAvailable", adUnitId);
+        }
+
+        public IAppOpenAdClient PollAd(string adUnitId)
+        {
+            androidAppOpenAd.Call("pollAd", adUnitId);
+            return this;
         }
 
         public IResponseInfoClient GetResponseInfoClient()
@@ -161,12 +172,7 @@ namespace GoogleMobileAds.Android
                     Value = valueInMicros,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                this.OnPaidEvent(this, args);
+                this.OnPaidEvent(adValue);
             }
         }
 

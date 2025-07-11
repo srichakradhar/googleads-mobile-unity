@@ -23,6 +23,7 @@ namespace GoogleMobileAds.Android
     public class RewardedAdClient : AndroidJavaProxy, IRewardedAdClient
     {
         private AndroidJavaObject androidRewardedAd;
+        private static AndroidJavaObject staticRewardedAd;
 
         public RewardedAdClient() : base(Utils.UnityRewardedAdCallbackClassName)
         {
@@ -40,7 +41,7 @@ namespace GoogleMobileAds.Android
 
         public event EventHandler<Reward> OnUserEarnedReward;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event EventHandler<AdErrorClientEventArgs> OnAdFailedToPresentFullScreenContent;
 
@@ -87,6 +88,23 @@ namespace GoogleMobileAds.Android
                 Type = type,
                 Amount = (double)amount
             };
+        }
+
+        // Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return this.androidRewardedAd.Call<string>("getAdUnitId");
+        }
+
+        public bool IsAdAvailable(string adUnitId)
+        {
+            return this.androidRewardedAd.Call<bool>("isAdAvailable", adUnitId);
+        }
+
+        public IRewardedAdClient PollAd(string adUnitId)
+        {
+            androidRewardedAd.Call("pollAd", adUnitId);
+            return this;
         }
 
         // Returns ad request response info
@@ -193,12 +211,7 @@ namespace GoogleMobileAds.Android
                     Value = valueInMicros,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                this.OnPaidEvent(this, args);
+                this.OnPaidEvent(adValue);
             }
         }
 

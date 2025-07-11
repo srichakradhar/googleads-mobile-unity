@@ -55,6 +55,7 @@ namespace GoogleMobileAds.Api
         /// </summary>
         public event Action<AdError> OnAdFullScreenContentFailed;
 
+        protected static internal IRewardedAdClient _staticClient;
         private IRewardedAdClient _client;
         private bool _canShowAd;
         private Action<Reward> _userRewardEarnedCallback;
@@ -79,16 +80,20 @@ namespace GoogleMobileAds.Api
                 return;
             }
 
-            var client = MobileAds.GetClientFactory().BuildRewardedAdClient();
-            client.CreateRewardedAd();
-            client.OnAdLoaded += (sender, args) =>
+            if (_staticClient == null)
+            {
+                _staticClient = MobileAds.GetClientFactory().BuildRewardedAdClient();
+                _staticClient.CreateRewardedAd();
+
+            }
+            _staticClient.OnAdLoaded += (sender, args) =>
             {
                 MobileAds.RaiseAction(() =>
                 {
-                    adLoadCallback(new RewardedAd(client), null);
+                    adLoadCallback(new RewardedAd(_staticClient), null);
                 });
             };
-            client.OnAdFailedToLoad += (sender, error) =>
+            _staticClient.OnAdFailedToLoad += (sender, error) =>
             {
                 var loadAdError = new LoadAdError(error.LoadAdErrorClient);
                 MobileAds.RaiseAction(() =>
@@ -96,7 +101,7 @@ namespace GoogleMobileAds.Api
                     adLoadCallback(null, loadAdError);
                 });
             };
-            client.LoadAd(adUnitId, request);
+            _staticClient.LoadAd(adUnitId, request);
         }
 
         /// <summary>
@@ -132,6 +137,33 @@ namespace GoogleMobileAds.Api
         }
 
         /// <summary>
+        /// Verify if an ad is preloaded and available to show.
+        /// </summary>
+        /// <param name="adUnitId">The ad Unit Id of the ad to verify. </param>
+        public static bool IsAdAvailable(string adUnitId)
+        {
+            if (_staticClient == null)
+            {
+                _staticClient = MobileAds.GetClientFactory().BuildRewardedAdClient();
+            }
+            return _staticClient != null ? _staticClient.IsAdAvailable(adUnitId) : false;
+        }
+
+        /// <summary>
+        /// Returns the next pre-loaded app open ad and null if no ad is available.
+        /// </summary>
+        /// <param name="adUnitId">The ad Unit ID of the ad to poll.</param>
+        public static RewardedAd PollAd(string adUnitId)
+        {
+            if (_staticClient == null)
+            {
+                _staticClient = MobileAds.GetClientFactory().BuildRewardedAdClient();
+            }
+            _staticClient.CreateRewardedAd();
+            return _staticClient != null ? new RewardedAd(_staticClient.PollAd(adUnitId)) : null;
+        }
+
+        /// <summary>
         /// The reward item for the loaded rewarded ad.
         /// </summary>
         public Reward GetRewardItem()
@@ -149,6 +181,14 @@ namespace GoogleMobileAds.Api
             {
                 _client.DestroyRewardedAd();
             }
+        }
+
+        /// <summary>
+        /// Returns the ad unit ID.
+        /// </summary>
+        public string GetAdUnitID()
+        {
+            return _client != null ? _client.GetAdUnitID() : null;
         }
 
         /// <summary>
@@ -217,13 +257,13 @@ namespace GoogleMobileAds.Api
                 });
             };
 
-            _client.OnPaidEvent += (sender, args) =>
+            _client.OnPaidEvent += (adValue) =>
             {
                 MobileAds.RaiseAction(() =>
                 {
                     if (OnAdPaid != null)
                     {
-                        OnAdPaid(args.AdValue);
+                        OnAdPaid(adValue);
                     }
                 });
             };

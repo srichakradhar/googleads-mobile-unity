@@ -29,7 +29,7 @@ namespace GoogleMobileAds.Unity
 
         public event EventHandler<LoadAdErrorClientEventArgs> OnAdFailedToLoad;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event EventHandler<AdErrorClientEventArgs> OnAdFailedToPresentFullScreenContent;
 
@@ -84,39 +84,10 @@ namespace GoogleMobileAds.Unity
             // Do nothing.
         }
 
-        public void LoadAd(string adUnitID, AdRequest request)
+        public void LoadAd(string adUnitId, AdRequest request)
         {
+            base._adUnitId = adUnitId;
             LoadAndSetPrefabAd(prefabAds[new AdSize(768, 1024)]);
-            if (prefabAd != null)
-            {
-                if(OnAdLoaded != null)
-                {
-                    OnAdLoaded.Invoke(this, EventArgs.Empty);
-                }
-            }
-            else
-            {
-                if(OnAdFailedToLoad != null)
-                {
-                    OnAdFailedToLoad.Invoke(this, new LoadAdErrorClientEventArgs()
-                    {
-                        LoadAdErrorClient = new LoadAdErrorClient()
-                    });
-                }
-            }
-        }
-
-        public void LoadAd(string adUnitID, AdRequest request, ScreenOrientation orientation)
-        {
-            if (Screen.width > Screen.height) // Landscape
-            {
-                LoadAndSetPrefabAd(prefabAds[new AdSize(1024, 768)]);
-            }
-            else
-            {
-                LoadAndSetPrefabAd(prefabAds[new AdSize(768, 1024)]);
-            }
-
             if (prefabAd != null)
             {
                 if(OnAdLoaded != null)
@@ -161,10 +132,21 @@ namespace GoogleMobileAds.Unity
           }
         }
 
+        public bool IsAdAvailable(string adUnitId)
+        {
+            return false;
+        }
+
+        public IAppOpenAdClient PollAd(string adUnitId)
+        {
+            return new AppOpenAdClient();
+        }
+
         public void DestroyAppOpenAd()
         {
-          AdBehaviour.DestroyAd(dummyAd);
-          prefabAd = null;
+            AdBehaviour.DestroyAd(dummyAd);
+            prefabAd = null;
+            base._adUnitId = null;
         }
     }
 }

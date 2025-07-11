@@ -1,5 +1,6 @@
 {
     "name": "GoogleMobileAds.iOS",
+    "rootNamespace": "",
     "references": [
         "GoogleMobileAds.Common",
         "GoogleMobileAds.Core",
@@ -10,7 +11,7 @@
         "iOS"
     ],
     "excludePlatforms": [],
-    "allowUnsafeCode": false,
+    "allowUnsafeCode": true,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,

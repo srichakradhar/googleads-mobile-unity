@@ -28,7 +28,7 @@ namespace GoogleMobileAds.iOS
         private IntPtr appOpenAdPtr;
         private IntPtr appOpenAdClientPtr;
 
-        #region app open callback types
+#region app open callback types
 
         internal delegate void GADUAppOpenAdLoadedCallback(
             IntPtr appOpenAdClient);
@@ -39,9 +39,9 @@ namespace GoogleMobileAds.iOS
         internal delegate void GADUAppOpenAdPaidEventCallback(
             IntPtr appOpenAdClient, int precision, long value, string currencyCode);
 
-        #endregion
+#endregion
 
-        #region full screen content callback types
+#region full screen content callback types
 
         internal delegate void GADUAppOpenAdFailedToPresentFullScreenContentCallback(
             IntPtr appOpenAdClient, IntPtr error);
@@ -53,13 +53,13 @@ namespace GoogleMobileAds.iOS
         internal delegate void GADUAppOpenAdDidRecordImpressionCallback(IntPtr appOpenAdClient);
 
         internal delegate void GADUAppOpenAdDidRecordClickCallback(IntPtr appOpenAdClient);
-        #endregion
+#endregion
 
         public event EventHandler<EventArgs> OnAdLoaded;
 
         public event EventHandler<LoadAdErrorClientEventArgs> OnAdFailedToLoad;
 
-        public event EventHandler<AdValueEventArgs> OnPaidEvent;
+        public event Action<AdValue> OnPaidEvent;
 
         public event EventHandler<AdErrorClientEventArgs> OnAdFailedToPresentFullScreenContent;
 
@@ -86,7 +86,7 @@ namespace GoogleMobileAds.iOS
             }
         }
 
-        #region IAppOpenAdClient implementation
+#region IAppOpenAdClient implementation
 
         public void CreateAppOpenAd()
         {
@@ -103,22 +103,28 @@ namespace GoogleMobileAds.iOS
                     AdDidDismissFullScreenContentCallback,
                     AdDidRecordImpressionCallback,
                     AdDidRecordClickCallback);
+            Debug.Log("C# set AppOpenAd callbacks.");
         }
 
         // Load an ad.
         public void LoadAd(string adUnitID, AdRequest request)
         {
-            IntPtr requestPtr = Utils.BuildAdRequest(request);
+            IntPtr requestPtr = Utils.BuildAdManagerAdRequest(request);
             Externs.GADULoadAppOpenAdWithAdUnitID(this.AppOpenAdPtr, adUnitID,  requestPtr);
             Externs.GADURelease(requestPtr);
         }
 
-        // Load an ad.
-        public void LoadAd(string adUnitID, AdRequest request, ScreenOrientation orientation)
+        // Verify if an ad is preloaded and available to show.
+        public bool IsAdAvailable(string adUnitId)
         {
-            IntPtr requestPtr = Utils.BuildAdRequest(request);
-            Externs.GADULoadAppOpenAd(this.AppOpenAdPtr, adUnitID, (int) orientation, requestPtr);
-            Externs.GADURelease(requestPtr);
+            return Externs.GADUAppOpenIsPreloadedAdAvailable(adUnitId);
+        }
+
+        // Returns the next pre-loaded app open ad and null if no ad is available.
+        public IAppOpenAdClient PollAd(string adUnitId)
+        {
+            Externs.GADUAppOpenPreloadedAdWithAdUnitID(this.AppOpenAdPtr, adUnitId);
+            return this;
         }
 
         // Show the app open ad on the screen.
@@ -127,6 +133,12 @@ namespace GoogleMobileAds.iOS
             Externs.GADUShowAppOpenAd(this.AppOpenAdPtr);
         }
 
+        // Returns the ad unit ID.
+        public string GetAdUnitID()
+        {
+            return Externs.GADUGetAppOpenAdUnitID(this.AppOpenAdPtr);
+        }
+        
         public IResponseInfoClient GetResponseInfoClient()
         {
             return new ResponseInfoClient(ResponseInfoClientType.AdLoaded, this.AppOpenAdPtr);
@@ -147,11 +159,12 @@ namespace GoogleMobileAds.iOS
         ~AppOpenAdClient()
         {
             this.Dispose();
+            Debug.Log("Destroyed AppOpenAdClient");
         }
 
-        #endregion
+#endregion
 
-        #region App open ad callback methods
+#region App open ad callback methods
 
         [MonoPInvokeCallback(typeof(GADUAppOpenAdLoadedCallback))]
         private static void AppOpenAdLoadedCallback(IntPtr appOpenAdClient)
@@ -191,12 +204,7 @@ namespace GoogleMobileAds.iOS
                     Value = value,
                     CurrencyCode = currencyCode
                 };
-                AdValueEventArgs args = new AdValueEventArgs()
-                {
-                    AdValue = adValue
-                };
-
-                client.OnPaidEvent(client, args);
+                client.OnPaidEvent(adValue);
             }
         }
 
@@ -261,7 +269,7 @@ namespace GoogleMobileAds.iOS
             return handle.Target as AppOpenAdClient;
         }
 
-        #endregion
+#endregion
     }
 }
 #endif

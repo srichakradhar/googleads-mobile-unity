@@ -1,6 +1,6 @@
 {
-    "name": "com.google.ads.mobile",
-    "version": "8.6.3",
+    "name": "com.g00gle.googleads-mobile-unity",
+    "version": "8.6.6",
     "displayName": "Google Mobile Ads Unity Plugin",
     "description": "The Google Mobile Ads SDK is the latest generation in Google mobile advertising featuring refined ad formats and streamlined APIs for access to mobile ad networks and advertising solutions. The SDK enables mobile app developers to maximize their monetization in native mobile apps. This plugin enables Unity developers to easily serve Google Mobile Ads on Android and iOS apps without having to write Java or Objective-C code. The plugin provides a C# interface for requesting ads that is used by C# scripts in your Unity project.",
     "unity": "2019.4",
@@ -8,7 +8,7 @@
     "changelogUrl": "https://github.com/googleads/googleads-mobile-unity/releases",
     "licensesUrl": "https://github.com/googleads/googleads-mobile-unity/blob/main/LICENSE",
     "dependencies": {
-      "com.google.external-dependency-manager": "1.2.179"
+      "com.google.external-dependency-manager": "1.2.186"
     },
     "keywords": [
       "Google",
@@ -24,6 +24,6 @@
             "description": "The how-to sample to monetize a Unity app. Demonstrates how to load and show the AdMob ad formats.",
             "path": "Samples~/HelloWorld"
         }
-    ]
+    ],
+	"private": "true"
 }
-
